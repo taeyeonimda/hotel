@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hotel.refund.dao.map.RefundMap">
+	<select id="getRefunds" resultType="refund">
+		select
+		* from
+		(select ROWNUM RN,
+		refunds.*from
+		(select rownum ,rf.refund_num
+		refundNum, rf.refund_account_num refundAccountNum, rf.refund_content
+		refundContent,
+		rf.refund_price refundPrice, rf.refund_date refundDate, rf.refund_status
+		refundStatus, rf.user_id userId, rf.res_num resNum
+		from refunds rf,reservations rs
+		where rf.refund_num = rs.res_num order by refund_num DESC)
+		refunds)refunds
+		where
+		RN between #{start} and #{end}
+	</select>
+
+	<select id="getRefundsCnt" resultType="int">
+		select count(*)
+		from
+		refunds
+	</select>
+
+	<select id="getReservation" parameterType="refund"
+		resultMap="refundMap">
+		select rs.user_id userId, rs.res_pername, rs.res_email,
+		rs.res_tel, rs.room_num,
+		rs.res_chkin, rs.res_chkout, rs.res_pernum, rs.res_pay, rs.res_price
+		from
+		reservations rs, refunds rf
+		where rf.refund_num = rs.res_num
+		and
+		rs.res_num = #{resNum}
+	</select>
+
+	<select id="getRefund" resultType="refund">
+		select rs.user_id,
+		rs.res_pername, rs.res_email, rs.res_tel, rs.room_num,
+		rs.res_chkin, rs.res_chkout, rs.res_pernum, rs.res_pay, rs.res_price,
+		rf.refund_account_num refundAccountNum, rf.refund_content
+		refundContent,
+		rf.refund_num refundNum
+		from reservations rs, refunds rf
+		where rf.refund_num =
+		rs.res_num
+		and rs.res_num = #{resNum}
+	</select>
+
+	<insert id="addRefundInfo" parameterType="refund">
+		insert into refunds
+		values (
+		#{refundNum},
+		#{refundAccountNum},
+		#{refundContent},
+		150000,
+		sysdate,
+		'환불미완료',
+		#{userId},
+		#{resNum}
+		)
+	</insert>
+
+	<update id="updateRefundStatus" parameterType="refund">
+		update refunds
+		set refund_status = #{refundStatus}
+		where refund_num = #{refundNum}
+	</update>
+
+	<resultMap id="refundMap" type="refund">
+		<collection property="reservations"
+			resultMap="reservationMap" />
+	</resultMap>
+
+	<resultMap id="reservationMap" type="reservation">
+		<result property="resPername" column="res_pername" />
+		<result property="resEmail" column="res_email" />
+		<result property="resTel" column="res_tel" />
+		<result property="resChkin" column="res_chkin" />
+		<result property="resChkout" column="res_chkout" />
+		<result property="resPernum" column="res_pernum" />
+		<result property="resPay" column="res_pay" />
+		<result property="resPrice" column="res_price" />
+	</resultMap>
+</mapper>

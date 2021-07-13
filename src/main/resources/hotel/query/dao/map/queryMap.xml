@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hotel.query.dao.map.QueryMap">
+
+   <!-- 문의 목록 -->
+   <select id="getQuerys" resultType="query">
+   select *
+   from
+   (select ROWNUM RN,
+      querys.*from
+      (select rownum,
+            query_num queryNum,
+            query_title queryTitle,
+            query_content queryContent,
+            query_date queryDate,
+            query_reply queryReply,
+            query_reply_stat queryReplyStat,
+            query_hit queryHit,
+            user_id userId
+         from querys
+         order by queryNum DESC)
+      querys)querys
+      where RN BETWEEN #{start} AND #{end}
+   </select>
+
+   <select id="getQuerysCnt" resultType="int">
+      select count(*) listCnt
+      from QUERYS
+   </select>
+
+   <!-- 문의 조회 -->
+   <select id="getQuery" resultType="query">
+      select
+      query_num queryNum,
+      query_title queryTitle,
+      query_content queryContent,
+      user_id userId,
+      query_date   queryDate,
+      query_hit queryHit,
+      query_content queryContent,
+      query_reply queryReply,
+      query_reply_stat queryReplyStat
+      from querys
+      where query_num = #{queryNum}
+   </select>
+
+   <!-- 문의 조회수 -->
+   <update id="plusCnt" parameterType="int">
+      update querys
+      set
+      query_hit = query_hit + 1
+      where query_num = #{queryNum}
+   </update>
+
+   <!-- 문의 등록 -->
+   <insert id='addQuery' parameterType='query' >
+   insert into querys
+   values
+   (
+      querynum_seq.nextval,
+      #{queryTitle,jdbcType=VARCHAR},
+      #{queryContent,jdbcType=VARCHAR},
+      sysdate,
+      #{queryReply,jdbcType=VARCHAR},
+      #{queryReplayStat,jdbcType=VARCHAR},
+      0,
+      #{userId,jdbcType=VARCHAR}
+   )
+   </insert>
+
+   <!-- 문의 수정 -->
+   <update id="updateQuery" parameterType="query">
+      update querys
+      set
+     query_title = #{queryTitle},
+     query_content = #{queryContent}
+     where query_num = #{queryNum}
+   </update>
+
+    <update id='queryReply' parameterType='query'>
+   update querys
+   set
+   query_reply = #{queryReply},
+   query_reply_stat = #{queryReplayStat}
+   where query_num=#{queryNum}
+   </update>
+
+   <!-- 문의 삭제 -->
+   <delete id="deleteQuery" parameterType="query">
+      delete
+      from
+      QUERYS
+      where query_num = #{queryNum}
+   </delete>
+
+</mapper>

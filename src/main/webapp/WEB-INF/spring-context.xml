@@ -6,7 +6,7 @@
 	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd
@@ -19,36 +19,36 @@
 	http://www.springframework.org/schema/tx
 	http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-	<context:component-scan base-package="kimkwangsoo.hotel" />
+	<context:component-scan base-package="hotel" />
 	<aop:aspectj-autoproxy />
 	<mvc:annotation-driven />
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/views/"/>
 		<property name="suffix" value=".jsp"/>
 	</bean>
-	
+
 		<!-- 파일 업로드로 들어오는 데이터를 처리하는 객체 -->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
-	<context:property-placeholder location='classpath:kimkwangsoo/hotel/config/attach.properties'/>
+	<context:property-placeholder location='classpath:hotel/config/attach.properties'/>
 	<mvc:resources mapping="/attach/**" location="/WEB-INF/attach/" />
-	
+
 	<mvc:resources mapping="/css/**" location="/WEB-INF/resources/css/" />
 	<mvc:resources mapping="/js/**" location="/WEB-INF/resources/js/" />
-	
+
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="jndiName" value="java:comp/env/jdbc/kimkwangsoo" />
+		<property name="jndiName" value="java:comp/env/jdbc/hotel" />
 		<property name="resourceRef" value="true" />
 	</bean>
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:kimkwangsoo/hotel/config/sqlMapConfig.xml" />
+		<property name="configLocation" value="classpath:hotel/config/sqlMapConfig.xml" />
 		<property name="mapperLocations">
 			<array>
-				<value>classpath:kimkwangsoo/hotel/**/dao/map/*.xml</value>
+				<value>classpath:hotel/**/dao/map/*.xml</value>
 			</array>
 		</property>
 	</bean>
-	<mybatis:scan base-package="kimkwangsoo.hotel.**.dao.map" />
+	<mybatis:scan base-package="hotel.**.dao.map" />
 
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
@@ -60,11 +60,11 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="mailSender"
 		class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name='username' value='kskim1458' ></property>
-		<property name='password' value='mgocpofhljinzocb'></property>
+		<property name='username' value='구글아이디' ></property>
+		<property name='password' value='구글비밀번호'></property>
 		<property name='javaMailProperties'>
 			<props>
 				<prop key='mail.smtp.starttls.enable'>true</prop>
@@ -77,9 +77,9 @@
 			</props>
 		</property>
 	</bean>
-	
-	
-	<bean id ='loginInterceptor' class='kimkwangsoo.hotel.user.controller.LoginInterceptor'/>
+
+
+	<bean id ='loginInterceptor' class='hotel.user.controller.LoginInterceptor'/>
 	<mvc:interceptors>
 		<mvc:interceptor>
 		<!-- 인터셉터 부분 -->
@@ -92,14 +92,14 @@
          	<mvc:mapping path="/user/userInfo" />
          	<mvc:mapping path="/reservation/resInfo" />
          	<mvc:mapping path="/refund/refundInfo" />
-         	
+
 			<!-- 인터셉터 예외부분 -->
 			<mvc:exclude-mapping path="/"/>
 			<ref bean='loginInterceptor' />
 		</mvc:interceptor>
 	</mvc:interceptors>
-	
-	
+
+
 	<bean id='transactionManager' class='org.springframework.jdbc.datasource.DataSourceTransactionManager'>
 		<property name='dataSource' ref='dataSource'></property>
 	</bean>

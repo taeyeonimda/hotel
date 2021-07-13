@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context>
    <WatchedResource>WEB-INF/web.xml</WatchedResource>
-   <Resource name="jdbc/kimkwangsoo"
+   <Resource name="jdbc/hotel"
       auth="Container"
       type="javax.sql.DataSource"
-      username="kimkwangsoo"
-      password="kimkwangsoo"
+      username="hotel"
+      password="hotel"
       driverClassName="oracle.jdbc.OracleDriver"
       factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
       url="jdbc:oracle:thin:@127.0.0.1:1521:xe"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<package name="hotel.common.domain"/>
+		<package name="hotel.user.domain" />
+		<package name="hotel.room.domain"/>
+		<package name="hotel.reservation.domain"/>
+		<package name="hotel.refund.domain"/>
+		<package name="hotel.review.domain"/>
+		<package name="hotel.query.domain"/>
+	</typeAliases>
+</configuration>
