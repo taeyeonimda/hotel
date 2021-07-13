@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+   <WatchedResource>WEB-INF/web.xml</WatchedResource>
+   <Resource name="jdbc/kimkwangsoo"
+      auth="Container"
+      type="javax.sql.DataSource"
+      username="kimkwangsoo"
+      password="kimkwangsoo"
+      driverClassName="oracle.jdbc.OracleDriver"
+      factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
+      url="jdbc:oracle:thin:@127.0.0.1:1521:xe"
+      maxActive="2"
+      minIdle="2" />
+</Context>

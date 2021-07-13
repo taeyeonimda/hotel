@@ -1,0 +1,121 @@
+<?xml version='1.0'  encoding = 'UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN '
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace='kimkwangsoo.hotel.user.dao.map.UserMap'>
+
+	<select resultType="user" id="getUsers">
+	select
+	*from
+	(select ROWNUM RN,
+		users.*from
+		(select rownum,	user_id userId,
+		user_pwd userPwd, user_name userName,
+		user_email userEmail, user_tel userTel,
+		user_addr userAddr, user_birth userBirth,
+		user_reg userReg,user_class	userClass,
+		user_status userStatus
+		from users)
+		users)users
+		where RN BETWEEN #{start} AND #{end} 
+	</select>
+	
+	<select id='getUsersCnt' resultType='int'>
+		select count(*)
+		from users
+	</select>
+	
+	<select id="todayCnt" resultType="int">
+		select count(*)from users
+		where to_char(user_reg) = to_char(sysdate)
+	</select>
+   
+	<insert id='addUser' parameterType='user'>
+		insert into users
+		values
+		(
+		#{userId,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR},
+		#{userPwd,jdbcType=VARCHAR},
+		#{userBirth,jdbcType=VARCHAR},
+		#{userTel,jdbcType=VARCHAR},
+		#{userEmail,jdbcType=VARCHAR},
+		#{userAddr,jdbcType=VARCHAR},
+		#{userClass,jdbcType=VARCHAR},
+		sysdate,
+		#{userStatus,jdbcType=CHAR}
+		)
+	</insert>
+	
+	<select id= 'getUser'  resultType='user'>
+		select user_id userId,
+				user_pwd userPwd,
+				user_name userName,
+				user_email userEmail,
+				user_tel userTel,
+				user_addr userAddr,
+				user_birth userBirth,
+				user_reg userReg,
+				user_class userClass,
+				user_status userStatus
+	from users
+	where user_id = #{userId}
+	</select>
+	
+	<select id= 'chkEmail'  resultType='user'>
+	select user_id userId,
+				user_email userEmail
+	from users
+	where user_email = #{userEmail}
+	</select>
+	
+	<select id ='loginUser' parameterType='user' resultType='user'>
+	select user_id userId,
+				user_pwd userPwd,
+				user_name userName,
+				user_email userEmail,
+				user_tel userTel,
+				user_addr userAddr,
+				user_birth userBirth,
+				user_reg userReg,
+				user_class userClass,
+				user_status userStatus
+	from users
+	where user_id =#{userId}
+	and user_pwd=#{userPwd}
+	and user_status != 'D'
+	</select>
+	
+	<update id='updateUser' parameterType='String'>
+		update users
+		set
+		user_pwd= #{userPwd},
+		user_email=#{userEmail},
+		user_tel=#{userTel},
+		user_addr=#{userAddr}
+		where user_id =#{userId}
+	</update>
+	
+	<update id ='deleteUser' parameterType='user'>
+	update users
+		set
+		user_status = 'D'
+	where user_id =#{userId}
+	</update>
+	
+	<select id='serchId'  resultType='user'>
+	select user_id userId
+	from users
+	where user_name=#{userName}
+	and user_email =#{userEmail}
+	</select>
+	
+	<select id='serchPw'  resultType='user'>
+		select user_id userId,
+		user_pwd userPwd,
+		user_email userEmail
+	from users
+	where user_id=#{userId}
+	and user_email =#{userEmail}
+	</select>
+	
+</mapper>

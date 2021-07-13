@@ -1,0 +1,154 @@
+<?xml version='1.0'  encoding = 'UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN '
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace='kimkwangsoo.hotel.room.dao.map.RoomMap'>
+
+   <select id='getRooms' resultType='room' parameterType='search'>
+      select *
+      from
+      (select ROWNUM RN,
+      		rooms.*from
+      		(select rownum,
+      			room_num roomNum, 
+            	room_list_seq roomListSeq,
+            	room_res_status roomResStatus, 
+            	room_status roomStatus,
+            	room_type roomType            
+      		from rooms)
+      		rooms)rooms
+      		where RN BETWEEN #{start} AND #{end}       
+   </select>
+   
+   <select id='getRoomTypes' resultType='RoomType'>
+      select *
+      from
+      (select ROWNUM RN,
+            room_types.*from
+            (select rownum,
+                  room_type roomType, 
+                  room_info roomInfo, 
+                  room_bed roomBed, 
+                  room_percnt roomPerCnt, 
+                  room_price roomPrice, 
+                  attach_name1 attachName1, 
+                  attach_name2 attachName2, 
+                  attach_name3 attachName3
+            from room_types)
+            room_types)room_types
+            where RN BETWEEN #{start} AND #{end}
+   </select>
+   
+   <select id="findRoom" resultType="room">
+		select room_num roomNum
+		from rooms
+		where room_type = #{roomType}
+		and room_res_status = '사용가능'
+		and rownum = 1
+   </select>
+   
+   <select id="getRoomsCnt" resultType="int">
+      select count(*) listCnt
+      from rooms
+   </select>
+   
+   <select id="getRoomTypesCnt" resultType="int">
+      select count(*) listCnt
+      from room_types      
+   </select>
+   
+   <select id='getRoom' parameterType='int' resultType='room' >
+      select r.room_num roomNum, 
+            r.room_res_status roomResStatus, 
+            r.room_status roomStatus, 
+            t.room_type roomType,
+            t.room_info roomInfo,
+            t.room_bed roomBed,
+            t.room_percnt roomPerCnt,
+            t.room_price roomPrice,
+            t.attach_name1 attachName1,
+            t.attach_name2 attachName2,
+            t.attach_name3 attachName3
+      from rooms r join room_types t
+      on r.room_type = t.room_type
+      where room_num = #{roomNum}
+   </select>
+   
+   <select id='getRoomType' parameterType='string' resultType='roomtype' >
+      select room_type roomType, 
+            room_info roomInfo, 
+            room_bed roomBed, 
+            room_percnt roomPerCnt,
+            room_price roomPrice,
+            attach_name1 attachName1,
+            attach_name2 attachName2,
+            attach_name3 attachName3
+      from room_types
+      where room_type = #{roomType,jdbcType=VARCHAR}
+   </select>
+   
+   <insert id='addRoom' parameterType='room'>
+      insert into rooms (room_num, room_list_seq ,room_status, room_type)
+       values(
+         #{roomNum,jdbcType=INTEGER}, 
+         roomlistseq_seq.nextval,
+         #{roomStatus,jdbcType=VARCHAR},
+         #{roomType,jdbcType=VARCHAR}
+      )
+   </insert>
+   
+   <insert id='addRoomType' parameterType='roomtype'>
+      insert into room_types (room_type, room_info, room_bed, room_percnt, room_price, attach_name1, attach_name2, attach_name3)
+      values(#{roomType,jdbcType=VARCHAR},
+             #{roomInfo,jdbcType=VARCHAR},
+             #{roomBed,jdbcType=VARCHAR},
+             #{roomPerCnt,jdbcType=VARCHAR},
+             #{roomPrice,jdbcType=INTEGER},
+            #{attachName1,jdbcType=VARCHAR},
+            #{attachName2,jdbcType=VARCHAR},
+            #{attachName3,jdbcType=VARCHAR}
+            )
+   </insert>
+   
+   <update id='updateRoom' parameterType='room'>
+      update rooms
+      set 
+         room_status = #{roomStatus,jdbcType=VARCHAR} 
+      where room_num = #{roomNum,jdbcType=INTEGER}
+   </update>
+   
+   <update id='updateRoomResStatus' parameterType='room'>
+      update rooms
+		set room_res_status =
+			case when room_res_status='사용가능' then '사용불가'
+				when room_res_status='사용불가' then '사용가능'
+			end
+		where room_num = #{roomNum,jdbcType=INTEGER}
+   </update>
+   
+   <update id='updateRoomType' parameterType='roomtype'>
+      update room_types
+      set
+         room_type = #{roomType,jdbcType=VARCHAR}, 
+         room_info = #{roomInfo,jdbcType=VARCHAR}, 
+         room_bed = #{roomBed,jdbcType=VARCHAR}, 
+         room_percnt = #{roomPerCnt,jdbcType=VARCHAR},
+         room_price = #{roomPrice,jdbcType=INTEGER}
+      where room_type = #{roomType,jdbcType=VARCHAR}
+   </update>
+   
+   <delete id="delRoomType" parameterType="string">
+      delete from room_types
+      where room_type = #{roomType}
+   </delete>
+   
+   <resultMap type="RoomType" id="roomMap">
+      <id property="roomType" column="room_type"/>
+      <result property="roomInfo" column="room_info"/>
+      <result property="roomBed" column="room_bed"/>
+      <result property="roomPerCnt" column="room_percnt"/>
+      <result property="roomPrice" column="room_price"/>
+      <result property="attachName1" column="attach_name1"/>
+      <result property="attachName2" column="attach_name2"/>
+      <result property="attachName3" column="attach_name3"/>
+   </resultMap>
+</mapper>
